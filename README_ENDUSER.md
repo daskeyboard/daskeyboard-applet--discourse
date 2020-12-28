@@ -1,10 +1,13 @@
-# Montastic
+# Discourse
 
-Montastic monitor URLs and sends an email when a website goes down.
+Displays Discourse admin notifications on a Das Keyboard Q Series.
 
-This applet displays Montastic alarms on a Q device:
+Discourse is a open source forum.
 
-- <span style="color:green">Green</span>: website is OK
-- <span style="color:red">Red</span>: website alarm
+For more informations about Discourse, visit <https://github.com/discourse/discourse>
 
-To get started, signup for a free Montastic account at <https://www.montastic.com>.
+![Discourse applet on a Das Keyboard Q](assets/image.png "Das Keyboard Discourse applet")
+
+This applet use Discourse [API](https://docs.discourse.org/).
+
+[GitHub repository](https://github.com/matthieulapatate/daskeyboard-applet-discourse-admin)

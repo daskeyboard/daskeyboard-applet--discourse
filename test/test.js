@@ -1,52 +1,114 @@
 const assert = require('assert');
-const {
-  QAWS
-} = require('../index');
+const logger = require('daskeyboard-applet/lib/logger');
+const t = require('../index');
+const auth = require('./auth.json');
 
-describe('QAWS', function () {
+describe('QDiscourse', () => {
+    async function makeApp(apikey, forum, username) {
+        let app = new t.QDiscourse();
 
-  describe('#run()', function () {
-    it('runs normally', async function () {
-      return buildApp().then(app => {
-        return app.run().then((signal) => {
-          console.log(JSON.stringify(signal));
-          assert.ok(signal);
-          assert.ok(signal.link.url);
-          assert.ok(signal.link.label);
-        }).catch(error => {
-          assert.fail(error);
+        await app.processConfig({
+            geometry: {
+                width: 1,
+                height: 1,
+            },
+            authorization: {
+                apiKey: apikey,
+            },
+            applet: {
+                user: {
+                    forum_url: forum,
+                    username: username,
+                    downColor: '#FF0000',
+                    downColor: 'SET_COLOR',
+                },
+            },
         });
-      });
-    });
-    it('returns an error when the API fails', async function () {
-      return buildApp({
-        authorization: {
-          apiKey: 'mickey mouse',
-        }
-      }).then(async app => {
-        return app.run().then((signal) => {
-          assert.ok(signal);
-          assert.equal('ERROR', signal.action);
-        }).catch(error => {
-          assert.fail(error);
+
+        return app;
+    }
+
+    // Test global run function
+    describe('#run()', () => {
+        it('runs', async function () {
+            return makeApp(auth.api_key, auth.forum_url, auth.username).then(
+                async (app) => {
+                    return app
+                        .run()
+                        .then((signal) => {
+                            assert.ok(signal);
+                            logger.info(JSON.stringify(signal));
+                        })
+                        .catch((error) => {
+                            assert.fail(error);
+                        });
+                }
+            );
         });
-      });
     });
-  });
+
+    // Generate signal without errors with 0 then 2 notification unread
+    describe('#generateSignal()', () => {
+        it('generate a signal', async function () {
+            return makeApp(auth.api_key, auth.forum_url, auth.username).then(
+                async (app) => {
+                    const actions = require('./goodResponseWith2NotificationsMock.json');
+                    const signal = await app.generateSignal(
+                        actions,
+                        app.config.downColor,
+                        app.config.downEffect
+                    );
+                    assert.ok(
+                        signal.message.includes('2 notifications unread')
+                    );
+                }
+            );
+        });
+    });
+
+    // Fetch the notifications of the testing user
+    describe('#getNotifications()', () => {
+        it('fetch the notifications', async function () {
+            return makeApp(auth.api_key, auth.forum_url, auth.username).then(
+                async (app) => {
+                    const response = await app.getNotifications(
+                        app.config.forum_url,
+                        app.config.username
+                    );
+                    logger.info(JSON.stringify(response));
+                    assert.ok(response.notifications);
+                }
+            );
+        });
+    });
+
+    // Trigger API Key error
+    describe('#API-Key-error()', () => {
+        it('trigger API Key error', async function () {
+            return makeApp('56875645645', auth.forum_url, auth.username).then(
+                async (app) => {
+                    return app.run().then((signal) => {
+                        logger.info(JSON.stringify(signal.errors));
+                        assert(signal.errors);
+                    });
+                }
+            );
+        });
+    });
+
+    // Trigger url forum error
+    describe('#URL error()', () => {
+        it('trigger non existing url forum error', async function () {
+            return makeApp(
+                auth.api_key,
+                'fjdkhfkjdsfh.com',
+                auth.username
+            ).then(async (app) => {
+                return app.run().then((signal) => {
+                    logger.info(JSON.stringify(signal.errors));
+                    assert(signal.errors);
+                });
+            });
+        });
+    });
 });
-
-
-const defaultConfig = Object.freeze({
-  authorization: {
-    apiKey: '8f652e62a922ca351521ea0b89199de1067d3204'
-  }
-});
-
-async function buildApp(config) {
-  let app = new QAWS();
-
-  // set up the test with a test account's API Key
-  return app.processConfig(config || defaultConfig).then(() => {
-    return app;
-  });
-}

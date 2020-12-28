@@ -1,0 +1,5 @@
+{
+  "forum_url": "https://<your-forum-url>.com/",
+  "api_key": "<API Key from https://your-forum-url.com/admin/api/keys>",
+  "username": "<Your Discourse username>"
+}

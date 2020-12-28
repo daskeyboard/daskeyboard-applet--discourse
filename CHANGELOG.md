@@ -1,6 +1,5 @@
+# Changelog Q Applet Discourse
 
-# Changelog Q Applet Montastic
-
-## Version 1.0.0 - December 20th, 2020
+## Version 1.0.0 - January 20th, 2021
 
 First release
