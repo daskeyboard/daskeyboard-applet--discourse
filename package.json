@@ -7,7 +7,7 @@
   "appUrl": "https://www.discourse.org/",
   "description": "Make blinking key if you have unread notification (admin only)",
   "longDescription": "Make blinking key if you have unread notification (admin only)",
-  "icon": "assets/icon.jpg",
+  "icon": "assets/icon.png",
   "image": "assets/image-missing.png",
   "videoUrl": "",
   "publisherName": "Das Keyboard",
@@ -60,6 +60,7 @@
         "help": "Username used to fetch the notifications",
         "order": 2,
         "required": "true",
+        "placeholder": "mySuperUsername",
         "controlType": "textbox"
       },
       {
@@ -67,6 +68,7 @@
         "label": "Your API username",
         "help": "API Username specified on the API Key generation",
         "order": 3,
+        "placeholder": "system || single username",
         "required": "true",
         "controlType": "textbox"
       },
