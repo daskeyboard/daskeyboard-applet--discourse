@@ -13,7 +13,7 @@ class QDiscourse extends q.DesktopApp {
     this.serviceHeaders = {
       "Content-Type": "application/json",
       "Api-Key": this.authorization.apikey,
-      "Api_Username": this.config.api_username,
+      "Api-Username": this.config.api_username,
     };
   }
 
@@ -77,11 +77,23 @@ class QDiscourse extends q.DesktopApp {
     })
     .catch((error) => {
       logger.error(
-        `Got error sending ssh request to service: ${JSON.stringify(error)}`
+        `Got error sending ssh request to service.`
       );
       if (`${error.message}`.includes("getaddrinfo")) {
       }
+      else if((`${error.message}`.includes("The requested URL or resource could not be found."))){
+        logger.info(
+          `The username does not exist, please give us another one.`
+        );
+        return q.Signal.error([
+        "The username does not exist, please give us another one.",
+        `Detail: ${error.message}`,
+      ]);
+      }
       else {
+        logger.info(
+          `The  account you are trying to fetch is not reachable, please check if your API Key is valid and has global right scope action`
+        );
         return q.Signal.error([
           "The  account you are trying to fetch is not reachable, please check if your API Key is valid and has global right scope action",
           `Detail: ${error.message}`,

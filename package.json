@@ -33,6 +33,7 @@
   },
   "dependencies": {
     "daskeyboard-applet": "^2.11.3",
+    "dotenv": "^8.2.0",
     "request-promise": "^4.2.6"
   },
   "qConfig": {

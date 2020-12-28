@@ -1,5 +1,6 @@
 const assert = require('assert');
 const t = require('../index');
+require('dotenv').config()
 
 describe('QDiscourse', () => {
   async function makeApp() {
@@ -11,13 +12,13 @@ describe('QDiscourse', () => {
         height: 1
       },
       authorization: {
-        apikey: "ef2de42be8ce7a61fbd49b67796ec20d237d06fcb760c2dcf65d29ed242adc84"
+        apikey: process.env.API,
       }
     });
 
     app.config= {
         forum:"https://qforum.daskeyboard.com/",
-        username:"Matthieu_Rioual",
+        username:process.env.USERNAME,
         api_username:"Matthieu_Rioual",
         upColor: "#00FF00",
         downColor:"#FF0000"
