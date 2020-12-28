@@ -10,9 +10,7 @@ You need to have access to the forum/admin and create an API key with global acc
 
 ## Example
 
-The "N" key in the image below is green because the GPU memory usage is currently under 20%.
-
-![GPU Usage on a Das Keybaord Q](assets/image.png "Das Keyboard GPU Usage applet")
+The "N" key in the image below is green because you have no unread notifications
 
 ## Installation
 
