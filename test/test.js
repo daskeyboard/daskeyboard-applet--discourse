@@ -1,52 +1,39 @@
 const assert = require('assert');
-const {
-  QAWS
-} = require('../index');
+const t = require('../index');
 
-describe('QAWS', function () {
+describe('QDiscourse', () => {
+  async function makeApp() {
+    let app = new t.QDiscourse();
 
-  describe('#run()', function () {
-    it('runs normally', async function () {
-      return buildApp().then(app => {
-        return app.run().then((signal) => {
-          console.log(JSON.stringify(signal));
-          assert.ok(signal);
-          assert.ok(signal.link.url);
-          assert.ok(signal.link.label);
-        }).catch(error => {
-          assert.fail(error);
-        });
-      });
+    await app.processConfig({
+      geometry: {
+        width: 1,
+        height: 1
+      },
+      authorization: {
+        apikey: "ef2de42be8ce7a61fbd49b67796ec20d237d06fcb760c2dcf65d29ed242adc84"
+      }
     });
-    it('returns an error when the API fails', async function () {
-      return buildApp({
-        authorization: {
-          apiKey: 'mickey mouse',
-        }
-      }).then(async app => {
-        return app.run().then((signal) => {
-          assert.ok(signal);
-          assert.equal('ERROR', signal.action);
-        }).catch(error => {
-          assert.fail(error);
-        });
-      });
-    });
-  });
-});
 
-
-const defaultConfig = Object.freeze({
-  authorization: {
-    apiKey: '8f652e62a922ca351521ea0b89199de1067d3204'
-  }
-});
-
-async function buildApp(config) {
-  let app = new QAWS();
-
-  // set up the test with a test account's API Key
-  return app.processConfig(config || defaultConfig).then(() => {
+    app.config= {
+        forum:"https://qforum.daskeyboard.com/",
+        username:"Matthieu_Rioual",
+        api_username:"Matthieu_Rioual",
+        upColor: "#00FF00",
+        downColor:"#FF0000"
+      }
     return app;
-  });
-}
+  }
+
+  describe('#run()', () => {
+    it('runs', async function () {
+      return makeApp().then(async app => {
+        return app.run().then((signal) => {
+          assert.ok(signal);
+        }).catch((error) => {
+          assert.fail(error)
+        });
+      })
+    })
+  })
+})

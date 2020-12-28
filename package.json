@@ -47,7 +47,7 @@
     },
     "questions": [
       {
-        "key": "discourseforum",
+        "key": "forum",
         "label": "Base URL of discourse forum",
         "placeholder": "https://qforum.daskeyboard.com/",
         "order": 1,

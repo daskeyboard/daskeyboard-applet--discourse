@@ -2,7 +2,7 @@ const q = require("daskeyboard-applet");
 const request = require("request-promise");
 const logger = q.logger;
 
-class QAWS extends q.DesktopApp {
+class QDiscourse extends q.DesktopApp {
   constructor() {
     super();
     // run every 1 min
@@ -15,11 +15,10 @@ class QAWS extends q.DesktopApp {
       "Api-Key": this.authorization.apikey,
       "Api_Username": this.config.api_username,
     };
-    console.log(this.serviceHeaders);
   }
 
   async run() {
-    const serviceUrl = this.config.discourseforum + 'notifications.json?username=' + this.config.username;
+    const serviceUrl = this.config.forum + 'notifications.json?username=' + this.config.username;
     const downEffect = 'BLINK';
     const upColor = this.config.upColor || '#00FF00';
     const downColor = this.config.downColor || '#FF0000';
@@ -47,15 +46,15 @@ class QAWS extends q.DesktopApp {
           number++;
           color = downColor;
           alerts.push(notifID);
-          logger.info("Notification with ID : "+notifID+" is unread");
         }
       }
+      logger.info("you have "+number+" notifications unread")
 
       if (number!=0) {
         let signal = new q.Signal({
           points: [[new q.Point(color,effect)]],
-          name: "AWS",
-          message: "you have "+number+" unread notifications with id's :"+alerts.join(", "),
+          name: this.config.rootURL,
+          message: "You have "+number+" unread notifications with id's :"+alerts.join(", "),
           link: {
             url: this.config.rootURL,
             label: "Open discourse web site",
@@ -77,18 +76,14 @@ class QAWS extends q.DesktopApp {
 
     })
     .catch((error) => {
-      console.log(error);
       logger.error(
         `Got error sending ssh request to service: ${JSON.stringify(error)}`
       );
-      if (`${error.message}`.includes("'You need to be logged in to do that.")) {
+      if (`${error.message}`.includes("getaddrinfo")) {
+      }
+      else {
         return q.Signal.error([
-          "You need to be connected to this discourse forum to allow parsing your notifications. Please log in : "+this.config.rootURL,
-          `Detail: ${error.message}`,
-        ]);
-      } else {
-        return q.Signal.error([
-          "The servive is not reachable, please verify your internet connection",
+          "The  account you are trying to fetch is not reachable, please check if your API Key is valid and has global right scope action",
           `Detail: ${error.message}`,
         ]);
       }
@@ -97,7 +92,7 @@ class QAWS extends q.DesktopApp {
 }
 
 module.exports = {
-  QAWS: QAWS,
+  QDiscourse: QDiscourse,
 };
 
-const applet = new QAWS()
+const applet = new QDiscourse()
