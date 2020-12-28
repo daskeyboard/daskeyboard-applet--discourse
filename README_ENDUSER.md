@@ -1,10 +1,8 @@
-# Montastic
+# Discourse
 
-Montastic monitor URLs and sends an email when a website goes down.
+This applet displays Discourse alarms on a Q device:
 
-This applet displays Montastic alarms on a Q device:
+- <span style="color:green">Green</span>: you have no unread notification
+- <span style="color:red">Red blinking</span>: you have unread notification(s)
 
-- <span style="color:green">Green</span>: website is OK
-- <span style="color:red">Red</span>: website alarm
-
-To get started, signup for a free Montastic account at <https://www.montastic.com>.
+To get started, create an API key on yourforum.com/admin
