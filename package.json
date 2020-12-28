@@ -1,0 +1,96 @@
+{
+  "name": "daskeyboard-applet--discourse",
+  "displayName": "Discourse",
+  "publisher": "Metadot Corporation",
+  "version": "1.0.0",
+  "officialProductName": "Discourse Q desktop application",
+  "appUrl": "https://aws.amazon.com/",
+  "description": "Make blinking key if you have unread notification (admin only)",
+  "longDescription": "Make blinking key if you have unread notification (admin only)",
+  "icon": "assets/icon.png",
+  "image": "assets/image-missing.png",
+  "videoUrl": "",
+  "publisherName": "Das Keyboard",
+  "authorName": "Das Keyboard",
+  "authorUrl": "https://twitter.com/daskeyboard",
+  "issuesUrl": "https://github.com/daskeyboard/daskeyboard-applet--aws/issues",
+  "homePageUrl": "https://aws.amazon.com/",
+  "developerRepoUrl": "https://github.com/daskeyboard/q-applet-montastic",
+  "licenseUrl": "http://www.gnu.org/licenses/old-licenses/gpl-2.0.txt",
+  "changelogUrl": "CHANGELOG.md",
+  "license": "MIT",
+  "readMeUrl": "README.md",
+  "readMeEndUserUrl": "README_ENDUSER.md",
+  "engines": {
+    "das-keyboard-q": "3.2.2"
+  },
+  "isSingleton": false,
+  "main": "index.js",
+  "scripts": {
+    "start": "node .",
+    "watch": "nodemon .",
+    "test": "mocha"
+  },
+  "dependencies": {
+    "daskeyboard-applet": "^2.11.3",
+    "fs": "0.0.1-security",
+    "node-ssh": "^11.1.1",
+    "request-promise": "^4.2.6"
+  },
+  "qConfig": {
+    "geometry": {
+      "width": 1,
+      "height": 1
+    },
+    "authorization": {
+      "type": "apiKey",
+      "hint": "You need admin access to generate an API key",
+      "supportUrl": "https://montastic.com/me"
+    },
+    "questions": [
+      {
+        "key": "discourseforum",
+        "label": "Base URL of discourse forum",
+        "help": "https://qforum.daskeyboard.com/",
+        "order": 1,
+        "required": "true",
+        "controlType": "text"
+      },
+      {
+        "key": "username",
+        "label": "Your Discourse username",
+        "help": "Username used to fetch the notifications",
+        "order": 2,
+        "required": "true",
+        "controlType": "text"
+      },
+      {
+        "key": "api_username",
+        "label": "Your API username",
+        "help": "API Username specified on the API Key generation",
+        "order": 3,
+        "required": "true",
+        "controlType": "text"
+      },
+      {
+        "key": "upColor",
+        "label": "Choose an UP color",
+        "help": "Color when all the monitorings are OK",
+        "order": 4,
+        "value": "#00FF00",
+        "controlType": "color"
+      },
+      {
+        "key": "downColor",
+        "label": "Choose a DOWN color",
+        "help": "Color when some monitorings are DOWN",
+        "order": 5,
+        "value": "#FF0000",
+        "controlType": "color"
+      }
+    ]
+  },
+  "devDependencies": {
+    "mocha": "^5.2.0"
+  }
+}
