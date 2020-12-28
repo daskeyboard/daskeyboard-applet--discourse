@@ -43,16 +43,16 @@
     "authorization": {
       "type": "apiKey",
       "hint": "You need admin access to generate an API key",
-      "supportUrl": "https://montastic.com/me"
+      "supportUrl": "https://github.com/discourse/discourse/blob/master/docs/ADMIN-QUICK-START-GUIDE.md"
     },
     "questions": [
       {
         "key": "discourseforum",
         "label": "Base URL of discourse forum",
-        "help": "https://qforum.daskeyboard.com/",
+        "placeholder": "https://qforum.daskeyboard.com/",
         "order": 1,
         "required": "true",
-        "controlType": "text"
+        "controlType": "textbox"
       },
       {
         "key": "username",
@@ -60,7 +60,7 @@
         "help": "Username used to fetch the notifications",
         "order": 2,
         "required": "true",
-        "controlType": "text"
+        "controlType": "textbox"
       },
       {
         "key": "api_username",
@@ -68,7 +68,7 @@
         "help": "API Username specified on the API Key generation",
         "order": 3,
         "required": "true",
-        "controlType": "text"
+        "controlType": "textbox"
       },
       {
         "key": "upColor",
