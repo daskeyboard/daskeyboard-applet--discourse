@@ -13,7 +13,7 @@ class QDiscourse extends q.DesktopApp {
   async applyConfig() {
     this.serviceHeaders = {
       "Content-Type": "application/x-www-form-urlencoded",
-      "Api-Key": this.authorization.apikey
+      "Api-Key": this.authorization.apiKey
     };
   }
 
@@ -25,10 +25,9 @@ class QDiscourse extends q.DesktopApp {
     const upColor = this.config.upColor || "#00FF00";
     const downColor = this.config.downColor || "#FF0000";
 
-    return request
-      .get({
+    return request.get({
         url: serviceUrl,
-        headers: Object.assign(this.serviceHeaders,{"Api_Username": this.config.api_username}),
+        headers: Object.assign(this.serviceHeaders,{"Api-Username": this.config.api_username}),
         json: true,
       })
       .then((response) => {
@@ -40,8 +39,9 @@ class QDiscourse extends q.DesktopApp {
           let notifID = notification.id;
 
           logger.info(
-            `Notification ${notifID} is ${isRead ? "read" : " unread"} `
+            `Notification ${notifID} is ${isRead ? "read" : " unread"}`
           );
+          
 
           if (!notification.read) {
             effect = downEffect;
@@ -50,25 +50,23 @@ class QDiscourse extends q.DesktopApp {
             alerts.push(notifID);
           }
         }
-        logger.info("you have " + number + " notifications" + "unread");
+
+        logger.info("you have " + number + " notifications" + " unread");
 
         //look if we got at least one notification unread
         if (number != 0) {
           let signal = new q.Signal({
             points: [[new q.Point(color, effect)]],
             name: this.config.rootURL,
-            message:
-              "You have " +
-              number +
-              " unread notifications with id's :" +
-              alerts.join(", "),
+            message:"You have "+number+" unread notifications with id's :"+alerts.join(", "),
             link: {
               url: this.config.rootURL,
               label: "Open discourse web site",
             },
           });
           return signal;
-        } else {
+        } 
+        else {
           let signal = new q.Signal({
             points: [[new q.Point(color, effect)]],
             name: this.config.rootURL,
