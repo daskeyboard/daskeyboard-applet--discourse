@@ -12,103 +12,115 @@ class QDiscourse extends q.DesktopApp {
   //configure the headers of http request
   async applyConfig() {
     this.serviceHeaders = {
-      "Content-Type": "application/x-www-form-urlencoded",
-      "Api-Key": this.authorization.apiKey
+      "Content-Type": "application/json",
+      "Api-Key": this.authorization.apiKey,
+      "Api-Username": this.config.username
     };
+  }
+
+  async getNotifications(forum_url,username){
+    return request.get({
+      url:forum_url+"notifications.json?username="+username,
+      headers:this.serviceHeaders,
+      json:true,
+    })
+    .catch((error) => {
+      logger.error(`Got error sending ssh request to service : ${JSON.stringify(error)}`);
+      //does not handdle internet issue
+      if (`${error.message}`.includes("getaddrinfo")) {}
+      //if the username does not exit
+      else if (`${error.message}`.includes("The requested URL or resource could not be found.")) 
+      {
+        logger.info(
+          `The username does not exist, please give us another one.`
+        );
+        return q.Signal.error([
+          "The username does not exist, please give us another one.",
+          `Detail: ${error.message}`,
+        ]);
+      }
+      //API key issue
+      else {
+        logger.info(
+          `The  account you are trying to fetch is not reachable, 
+          please check if your API Key is valid and has global right scope action`
+        );
+        return q.Signal.error([
+          "The  account you are trying to fetch is not reachable, please check if your API Key is valid and has global right scope action",
+          `Detail: ${error.message}`,
+        ]);
+      }
+    });
+  }
+
+  async generateSignal(response,upColor,downColor,upEffect,downEffect){
+    //if the answer is json response with notification array
+    if(response.notifications){
+      let color=upColor;
+      let effect=upEffect;
+      let number=0;
+      for (let notification of response.notifications) {
+        let isRead = notification.read;
+        let notifID = notification.id;
+
+        logger.info(`Notification ${notifID} is ${isRead ? "read" : " unread"}`);
+        
+        if (!isRead) {
+          effect = downEffect;
+          number++;
+          color = downColor;
+          alerts.push(notifID);
+        }
+      }
+
+      logger.info("you have " + number + " notifications" + " unread");
+
+      //look if we got at least one notification unread
+      if (number != 0) {
+        let signal = new q.Signal({
+          points: [[new q.Point(color, effect)]],
+          name: this.config.rootURL,
+          message:"You have "+number+" unread notifications with id's :"+alerts.join(", "),
+          link: {
+            url: this.config.rootURL,
+            label: "Open discourse web site",
+          },
+        });
+        return signal;
+      }
+      else {
+        let signal = new q.Signal({
+          points: [[new q.Point(color, effect)]],
+          name: this.config.rootURL,
+          message: "You have no unread notifications",
+          link: {
+            url: this.config.rootURL,
+            label: "Open discourse web site",
+          },
+        });
+        return signal;
+      }
+    }
+    //if the answer is an error
+    else{
+      return response;
+    }
   }
 
   //main function running
   async run() {
-    const serviceUrl = this.config.forum + "notifications.json?username=" + this.config.username;
-    let effect = "SET_COLOR";
-    const downEffect = "BLINK";
+    //fecthing notifications
+    const forum_url= this.config.forum;
+    const username=this.config.username;
+    let notifications=await this.getNotifications(forum_url,username);
+    //generate the q signal
+    const upEffect = this.config.upEffect || "SET_COLOR";
+    const downEffect = this.config.upEffect || "BLINK";
     const upColor = this.config.upColor || "#00FF00";
     const downColor = this.config.downColor || "#FF0000";
-
-    return request.get({
-        url: serviceUrl,
-        headers: Object.assign(this.serviceHeaders,{"Api-Username": this.config.api_username}),
-        json: true,
-      })
-      .then((response) => {
-        let color = upColor;
-        let alerts = [];
-        let number = 0;
-        for (let notification of response.notifications) {
-          let isRead = notification.read;
-          let notifID = notification.id;
-
-          logger.info(
-            `Notification ${notifID} is ${isRead ? "read" : " unread"}`
-          );
-          
-
-          if (!notification.read) {
-            effect = downEffect;
-            number++;
-            color = downColor;
-            alerts.push(notifID);
-          }
-        }
-
-        logger.info("you have " + number + " notifications" + " unread");
-
-        //look if we got at least one notification unread
-        if (number != 0) {
-          let signal = new q.Signal({
-            points: [[new q.Point(color, effect)]],
-            name: this.config.rootURL,
-            message:"You have "+number+" unread notifications with id's :"+alerts.join(", "),
-            link: {
-              url: this.config.rootURL,
-              label: "Open discourse web site",
-            },
-          });
-          return signal;
-        } 
-        else {
-          let signal = new q.Signal({
-            points: [[new q.Point(color, effect)]],
-            name: this.config.rootURL,
-            message: "You have no unread notifications",
-            link: {
-              url: this.config.rootURL,
-              label: "Open discourse web site",
-            },
-          });
-          return signal;
-        }
-      })
-      .catch((error) => {
-        logger.error(`Got error sending ssh request to service : ${JSON.stringify(error)}`);
-        //does not handdle internet issue
-        if (`${error.message}`.includes("getaddrinfo")) {
-        }
-        //if the username does not exit
-        else if (
-          `${error.message}`.includes(
-            "The requested URL or resource could not be found."
-          )
-        ) {
-          logger.info(
-            `The username does not exist, please give us another one.`
-          );
-          return q.Signal.error([
-            "The username does not exist, please give us another one.",
-            `Detail: ${error.message}`,
-          ]);
-        }
-        //API key issue
-        else {
-          logger.info(
-            `The  account you are trying to fetch is not reachable, please check if your API Key is valid and has global right scope action`
-          );
-          return q.Signal.error([
-            "The  account you are trying to fetch is not reachable, please check if your API Key is valid and has global right scope action",
-            `Detail: ${error.message}`,
-          ]);
-        }
-      });
+    let signal=this.generateSignal(notifications,upColor,downColor,upEffect,downEffect);
+    return signal;
+    
   }
 }
 

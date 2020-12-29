@@ -3,6 +3,7 @@ const logger = require('daskeyboard-applet/lib/logger');
 const t = require('../index');
 const auth = require('./auth.json');
 
+
 describe('QDiscourse', () => {
   async function makeApp() {
     let app = new t.QDiscourse();
@@ -21,7 +22,9 @@ describe('QDiscourse', () => {
         username:auth.username,
         api_username:auth.api_username,
         upColor: "#00FF00",
-        downColor:"#FF0000"
+        downColor:"#FF0000",
+        upEffect:"SET_COLOR",
+        downColor:"SET_COLOR"
         },
       }
     });

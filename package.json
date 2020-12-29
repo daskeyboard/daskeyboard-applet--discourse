@@ -88,7 +88,24 @@
         "order": 5,
         "value": "#FF0000",
         "controlType": "color"
+      },
+      {
+        "key": "upEffect",
+        "label": "Choose an UP effect",
+        "help": "Lighting effect when you got not unread notifications",
+        "order": 6,
+        "value": "SET_COLOR",
+        "controlType": "effect"
+      },
+      {
+        "key": "downEffect",
+        "label": "Choose a DOWN effect",
+        "help": "Lighting effect when you got unread notifications",
+        "order": 7,
+        "value": "BLINK",
+        "controlType": "effect"
       }
+
     ]
   },
   "devDependencies": {
