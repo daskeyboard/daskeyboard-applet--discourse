@@ -25,28 +25,27 @@ class QDiscourse extends q.DesktopApp {
       json:true,
     })
     .catch((error) => {
-      logger.error(`Got error sending ssh request to service : ${JSON.stringify(error)}`);
+      logger.error(`Got error sending http request to service : ${JSON.stringify(error)}`);
       //does not handdle internet issue
       if (`${error.message}`.includes("getaddrinfo")) {}
       //if the username does not exit
-      else if (`${error.message}`.includes("The requested URL or resource could not be found.")) 
+      else if (`${error.message}`.includes("Invalid URI")) 
       {
         logger.info(
-          `The username does not exist, please give us another one.`
+          `Wrong URL`
         );
         return q.Signal.error([
-          "The username does not exist, please give us another one.",
+          "The Forum root URL is not reachable, please put a valid one.",
           `Detail: ${error.message}`,
         ]);
       }
       //API key issue
       else {
         logger.info(
-          `The  account you are trying to fetch is not reachable, 
-          please check if your API Key is valid and has global right scope action`
+          `The account you are trying to fetch is not reachable, please check if your API Key is valid, has global right scope action and if the username is  valid.`
         );
         return q.Signal.error([
-          "The  account you are trying to fetch is not reachable, please check if your API Key is valid and has global right scope action",
+          "The account you are trying to fetch is not reachable, please check if your API Key is valid and has global right scope action.",
           `Detail: ${error.message}`,
         ]);
       }
@@ -59,6 +58,7 @@ class QDiscourse extends q.DesktopApp {
       let color=upColor;
       let effect=upEffect;
       let number=0;
+      let alerts=[];
       for (let notification of response.notifications) {
         let isRead = notification.read;
         let notifID = notification.id;
@@ -92,7 +92,7 @@ class QDiscourse extends q.DesktopApp {
         let signal = new q.Signal({
           points: [[new q.Point(color, effect)]],
           name: this.config.rootURL,
-          message: "You have no unread notifications",
+          message: "You have no unread notification",
           link: {
             url: this.config.rootURL,
             label: "Open discourse web site",
@@ -100,8 +100,9 @@ class QDiscourse extends q.DesktopApp {
         });
         return signal;
       }
+      
     }
-    //if the answer is an error
+    //if the answer is an error, send back the q error signal
     else{
       return response;
     }
