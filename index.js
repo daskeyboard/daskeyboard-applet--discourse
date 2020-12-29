@@ -12,16 +12,14 @@ class QDiscourse extends q.DesktopApp {
   //configure the headers of http request
   async applyConfig() {
     this.serviceHeaders = {
-      "Content-Type": "application/json",
-      "Api-Key": this.authorization.apikey,
-      "Api-Username": this.config.api_username,
+      "Content-Type": "application/x-www-form-urlencoded",
+      "Api-Key": this.authorization.apikey
     };
   }
 
   //main function running
   async run() {
-    const serviceUrl =
-      this.config.forum + "notifications.json?username=" + this.config.username;
+    const serviceUrl = this.config.forum + "notifications.json?username=" + this.config.username;
     let effect = "SET_COLOR";
     const downEffect = "BLINK";
     const upColor = this.config.upColor || "#00FF00";
@@ -30,34 +28,29 @@ class QDiscourse extends q.DesktopApp {
     return request
       .get({
         url: serviceUrl,
-        headers: this.serviceHeaders,
+        headers: Object.assign(this.serviceHeaders,{"Api_Username": this.config.api_username}),
         json: true,
       })
       .then((response) => {
         let color = upColor;
         let alerts = [];
         let number = 0;
-
         for (let notification of response.notifications) {
           let isRead = notification.read;
           let notifID = notification.id;
 
           logger.info(
-            `Notification ${notifID} is ${isRead ? "read" : "unread"} `
+            `Notification ${notifID} is ${isRead ? "read" : " unread"} `
           );
 
-          if (!isRead) {
+          if (!notification.read) {
             effect = downEffect;
             number++;
             color = downColor;
             alerts.push(notifID);
           }
         }
-        logger.info(
-          "you have " + number + " notification" + number >= 2
-            ? ""
-            : "s" + "unread"
-        );
+        logger.info("you have " + number + " notifications" + "unread");
 
         //look if we got at least one notification unread
         if (number != 0) {
@@ -89,7 +82,7 @@ class QDiscourse extends q.DesktopApp {
         }
       })
       .catch((error) => {
-        logger.error(`Got error sending ssh request to service.`);
+        logger.error(`Got error sending ssh request to service : ${JSON.stringify(error)}`);
         //does not handdle internet issue
         if (`${error.message}`.includes("getaddrinfo")) {
         }
