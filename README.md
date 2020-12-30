@@ -21,7 +21,7 @@ the Q Desktop application [https://www.daskeyboard.com](https://www.daskeyboard.
 
 ## Running tests
 
-- `yarn test`
+-   `yarn test`
 
 ## Contributions
 
