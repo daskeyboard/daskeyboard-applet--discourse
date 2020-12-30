@@ -108,6 +108,7 @@
     ]
   },
   "devDependencies": {
+    "eslint": "^7.16.0",
     "mocha": "^5.2.0",
     "prettier": "2.2.1"
   }
