@@ -18,6 +18,7 @@ class QDiscourse extends q.DesktopApp {
     };
   }
 
+  //function that fetch asynchronously the notifications of an user on the forum discourse informed
   async getNotifications(forum_url,username){
     return request.get({
       url:forum_url+"notifications.json?username="+username,
@@ -52,19 +53,22 @@ class QDiscourse extends q.DesktopApp {
     });
   }
 
+  //Send a q signal according to the response from API request
   async generateSignal(response,upColor,downColor,upEffect,downEffect){
     //if the answer is json response with notification array
     if(response.notifications){
       let color=upColor;
       let effect=upEffect;
+      //Variable that stores the number of unread notification
       let number=0;
+      //Varaible that stores the ids of unread notification
       let alerts=[];
       for (let notification of response.notifications) {
         let isRead = notification.read;
         let notifID = notification.id;
 
         logger.info(`Notification ${notifID} is ${isRead ? "read" : " unread"}`);
-        
+        //Check if the notification is read or not
         if (!isRead) {
           effect = downEffect;
           number++;
@@ -79,10 +83,10 @@ class QDiscourse extends q.DesktopApp {
       if (number != 0) {
         let signal = new q.Signal({
           points: [[new q.Point(color, effect)]],
-          name: this.config.rootURL,
-          message:"You have "+number+" unread notifications with id's :"+alerts.join(", "),
+          name: `${this.config.forum.substring(8)}`,
+          message:"You have "+number+" unread notifications with ids :"+alerts.join(", "),
           link: {
-            url: this.config.rootURL,
+            url: this.config.forum,
             label: "Open discourse web site",
           },
         });
@@ -91,10 +95,10 @@ class QDiscourse extends q.DesktopApp {
       else {
         let signal = new q.Signal({
           points: [[new q.Point(color, effect)]],
-          name: this.config.rootURL,
+          name: `${this.config.forum.substring(8)}`,
           message: "You have no unread notification",
           link: {
-            url: this.config.rootURL,
+            url: this.config.forum,
             label: "Open discourse web site",
           },
         });
