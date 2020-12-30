@@ -32,7 +32,7 @@ describe('QDiscourse', () => {
     return app;
   }
 
-  //test global run function (you can modify the values ahead to test the different errors)
+  //test global run function
   describe('#run()', () => {
     it('runs', async function () {
       return makeApp(auth.api_key,auth.forum_url,auth.username,auth.api_username).then(async app => {
@@ -84,9 +84,9 @@ describe('QDiscourse', () => {
       });
     })
   })
-
+  
+  //trigger url forum error
   describe('#URL error()',()=>{
-  //trigger url forum error()',()=>{
     it('trigger non existing url forum error', async function () {
       return makeApp(auth.api_key,'fjdkhfkjdsfh',auth.username,auth.api_username).then(async app => {
         return app.run().then((signal) => {
