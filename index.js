@@ -100,8 +100,8 @@ class QDiscourse extends q.DesktopApp {
                         ' unread notifications with ids :' +
                         alerts.join(', '),
                     link: {
-                        url: this.config.forum,
-                        label: 'Open discourse web site',
+                        url: this.config.forum+"u/"+this.config.username+"/notifications?filter=unread",
+                        label: 'Watch your notifications',
                     },
                 });
                 return signal;
@@ -132,7 +132,7 @@ class QDiscourse extends q.DesktopApp {
         let notifications = await this.getNotifications(forum_url, username);
         //generate the q signal
         const upEffect = this.config.upEffect || 'SET_COLOR';
-        const downEffect = this.config.upEffect || 'BLINK';
+        const downEffect = this.config.downEffect || 'BLINK';
         const upColor = this.config.upColor || '#00FF00';
         const downColor = this.config.downColor || '#FF0000';
         let signal = this.generateSignal(

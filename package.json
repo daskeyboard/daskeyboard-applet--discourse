@@ -1,12 +1,12 @@
 {
     "name": "daskeyboard-applet--discourse",
-    "displayName": "Discourse forum notifications",
+    "displayName": "Discourse",
     "publisher": "Metadot Corporation",
     "version": "1.0.0",
     "officialProductName": "Discourse forum notifications",
     "appUrl": "https://www.discourse.org/",
-    "description": "Make blinking key if you have unread notification (admin only)",
-    "longDescription": "Make blinking key if you have unread notification (admin only)",
+    "description": "Display Discourse notifications",
+    "longDescription": "Get a visual notification on your Das Keyboard Q series when there is an unread notification (admin only)",
     "icon": "assets/icon.png",
     "image": "assets/image-missing.png",
     "videoUrl": "",
@@ -66,7 +66,7 @@
             },
             {
                 "key": "api_username",
-                "label": "Your API username",
+                "label": "Your API Key username",
                 "help": "API Username specified on the API Key generation",
                 "order": 3,
                 "placeholder": "system || single username",
@@ -88,22 +88,6 @@
                 "order": 5,
                 "value": "#FF0000",
                 "controlType": "color"
-            },
-            {
-                "key": "upEffect",
-                "label": "Choose an UP effect",
-                "help": "Lighting effect when you got not unread notifications",
-                "order": 6,
-                "value": "SET_COLOR",
-                "controlType": "effect"
-            },
-            {
-                "key": "downEffect",
-                "label": "Choose a DOWN effect",
-                "help": "Lighting effect when you got unread notifications",
-                "order": 7,
-                "value": "BLINK",
-                "controlType": "effect"
             }
         ]
     },
