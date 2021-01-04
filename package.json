@@ -74,12 +74,12 @@
                 "controlType": "textbox"
             },
             {
-                "key": "upColor",
-                "label": "Choose an UP color",
-                "help": "Color when all the monitorings are OK",
+                "key": "downEffect",
+                "label": "Choose a DOWN effect",
+                "help": "Key effect when you got a new notification",
                 "order": 4,
-                "value": "#00FF00",
-                "controlType": "color"
+                "value": "BLINK",
+                "controlType": "effet"
             },
             {
                 "key": "downColor",

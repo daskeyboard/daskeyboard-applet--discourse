@@ -9,7 +9,9 @@ class QDiscourse extends q.DesktopApp {
         this.pollingInterval = 1 * 60 * 1000;
     }
 
-    //configure the headers of http request
+    /**
+     * configure the headers of http request
+     */
     async applyConfig() {
         this.serviceHeaders = {
             'Content-Type': 'application/json',
@@ -18,39 +20,37 @@ class QDiscourse extends q.DesktopApp {
         };
     }
 
-    //function that fetch asynchronously the notifications of an user on 
-    //the forum discourse informed
-    async getNotifications(forum_url, username) {
+    /**
+     * Function that fetch asynchronously the notifications of an user on 
+     * the forum discourse informed
+     * @param {*} host 
+     * @param {*} username 
+     */
+    async getNotifications(host, username) {
         return request
             .get({
-                url: forum_url + 'notifications.json?username=' + username,
+                url: host + '/notifications.json?username=' + username,
                 headers: this.serviceHeaders,
                 json: true,
             })
             .catch((error) => {
                 logger.error(
-                    `Got error sending http request to service : ${JSON.stringify(
+                    `Discourse : Got error sending http request to service : ${JSON.stringify(
                         error
                     )}`
                 );
-                //does not handdle internet issue
+                // does not handdle internet issue
                 if (`${error.message}`.includes('getaddrinfo')) {
                 }
-                //if the username does not exit
+                // if the username does not exit
                 else if (`${error.message}`.includes('Invalid URI')) {
-                    logger.info(`Wrong URL`);
                     return q.Signal.error([
                         'The Forum root URL is not reachable, please put a valid one.',
                         `Detail: ${error.message}`,
                     ]);
                 }
-                //API key issue
+                // API key issue
                 else {
-                    logger.info(
-                        `The account you are trying to fetch is not reachable, \
-                        please check if your API Key is valid, has global right \
-                        scope action and if the username is  valid.`
-                    );
                     return q.Signal.error([
                         'The account you are trying to fetch is not reachable, \
                         please check if your API Key is valid and has global right\
@@ -61,85 +61,79 @@ class QDiscourse extends q.DesktopApp {
             });
     }
 
-    //Send a q signal according to the response from API request
-    async generateSignal(response, upColor, downColor, upEffect, downEffect) {
-        //if the answer is json response with notification array
+    /**
+     * Send a q signal according to the response from API request
+     * 
+     * @param {*} response 
+     * @param {*} downColor 
+     * @param {*} downEffect 
+     */
+    async generateSignal(response, downColor, downEffect) {
+        // if the answer is json response with notification array
         if (response.notifications) {
+            let signal=null;
             let color = upColor;
             let effect = upEffect;
-            //Variable that stores the number of unread notification
-            let number = 0;
-            //Varaible that stores the ids of unread notification
+            // variable that stores the number of unread notification
+            let notificationNumber = 0;
+            // variable that stores the ids of unread notification
             let alerts = [];
             for (let notification of response.notifications) {
                 let isRead = notification.read;
                 let notifID = notification.id;
 
-                logger.info(
-                    `Notification ${notifID} is ${isRead ? 'read' : ' unread'}`
-                );
-                //Check if the notification is read or not
+                // check if the notification is read or not
                 if (!isRead) {
                     effect = downEffect;
-                    number++;
+                    notificationNumber++;
                     color = downColor;
                     alerts.push(notifID);
                 }
             }
 
-            logger.info('you have ' + number + ' notifications' + ' unread');
 
-            //look if we got at least one notification unread
-            if (number != 0) {
-                let signal = new q.Signal({
+            // look if we got at least one notification unread
+            if (notificationNumber != 0) { 
+                logger.info('you have ' + notificationNumber + ' notifications' + ' unread');
+                signal = new q.Signal({
                     points: [[new q.Point(color, effect)]],
-                    name: `${this.config.forum.substring(8)}`,
+                    name: `${this.config.forum}`,
                     message:
                         'You have ' +
-                        number +
+                        notificationNumber +
                         ' unread notifications with ids :' +
                         alerts.join(', '),
                     link: {
-                        url: this.config.forum+"u/"+this.config.username+"/notifications?filter=unread",
-                        label: 'Watch your notifications',
+                        url: this.config.forum+"/u/"+this.config.username+"/notifications?filter=unread",
+                        label: 'Show in Discourse',
                     },
-                });
-                return signal;
-            } else {
-                let signal = new q.Signal({
-                    points: [[new q.Point(color, effect)]],
-                    name: `${this.config.forum.substring(8)}`,
-                    message: 'You have no unread notification',
-                    link: {
-                        url: this.config.forum,
-                        label: 'Open discourse web site',
-                    },
-                });
-                return signal;
+                });   
             }
+            return signal;
         }
-        //if the answer is an error, send back the q error signal
+        // if the answer is an error, send back the q error signal
         else {
             return response;
         }
     }
 
-    //main function running
+    // main function running
     async run() {
-        //fecthing notifications
-        const forum_url = this.config.forum;
+        // check if the last char of host is '/'. if so crop it.
+        if(this.config.forum.charAt(this.config.forum.length-1) == '/'){
+            var host = this.config.forum.substring(0,this.config.forum.length-1);
+        }
+        else
+            var host = this.config.forum;
         const username = this.config.username;
-        let notifications = await this.getNotifications(forum_url, username);
-        //generate the q signal
-        const upEffect = this.config.upEffect || 'SET_COLOR';
+        // fecthing notifications
+        let notifications = await this.getNotifications(host, username);
         const downEffect = this.config.downEffect || 'BLINK';
-        const upColor = this.config.upColor || '#00FF00';
         const downColor = this.config.downColor || '#FF0000';
+        // generate the q signal
         let signal = this.generateSignal(
             notifications,
-            upColor,
             downColor,
-            upEffect,
             downEffect
         );
         return signal;
