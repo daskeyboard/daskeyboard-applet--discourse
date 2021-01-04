@@ -74,7 +74,7 @@
                 "controlType": "textbox"
             },
             {
-                "key": "downEffect",
+                "key": "warnerEffect",
                 "label": "Choose a warner effect",
                 "help": "Key effect when you got a new notification",
                 "order": 4,
@@ -82,9 +82,9 @@
                 "controlType": "effect"
             },
             {
-                "key": "downColor",
+                "key": "warnerColor",
                 "label": "Choose a warner color",
-                "help": "Color when some monitorings are DOWN",
+                "help": "Key color when you got a new notification",
                 "order": 5,
                 "value": "#FF0000",
                 "controlType": "color"

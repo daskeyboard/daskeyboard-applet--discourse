@@ -10,7 +10,7 @@ class QDiscourse extends q.DesktopApp {
     }
 
     /**
-     * configure the headers of http request
+     * Configure the headers of http request
      */
     async applyConfig() {
         this.serviceHeaders = {
@@ -21,10 +21,10 @@ class QDiscourse extends q.DesktopApp {
     }
 
     /**
-     * Function that fetch asynchronously the notifications of an user on 
+     * Function that fetch asynchronously the notifications of an user on
      * the forum discourse informed
-     * @param {*} host 
-     * @param {*} username 
+     * @param {*} hostUrl : forum url
+     * @param {*} username : forum username
      */
     async getNotifications(host, username) {
         return request
@@ -63,18 +63,16 @@ class QDiscourse extends q.DesktopApp {
 
     /**
      * Send a q signal according to the response from API request
-     * 
-     * @param {*} response 
-     * @param {*} downColor 
-     * @param {*} downEffect 
+     *
+     * @param {*} response : json response from API
+     * @param {*} warnerColor : key color 
+     * @param {*} warnerEffect :
      */
-    async generateSignal(response, downColor, downEffect) {
-        // if the answer is json response with notification array
+    async generateSignal(response, warnerColor, warnerEffect) {
+        // if notifications exist in response
         if (response.notifications) {
-            let signal=null;
-            // variable that stores the number of unread notification
+            let signal = null;
             let notificationNumber = 0;
-            // variable that stores the ids of unread notification
             for (let notification of response.notifications) {
                 let isRead = notification.read;
 
@@ -84,27 +82,32 @@ class QDiscourse extends q.DesktopApp {
                 }
             }
 
+            // check if there are notifications
+            if (notificationNumber != 0) {
+                let message =
+                    notificationNumber == 1
+                        ? '1 unread notification on ' + this.config.host
+                        : notificationNumber +
+                          ' notifications unread on ' +
+                          this.config.host;
 
-            // look if we got at least one notification unread
-            if (notificationNumber != 0) { 
-                if(notificationNumber==1){
-                    var message='1 unread notification on '+this.config.host;
-                }
-                else
-                    var message= notificationNumber + ' notifications' + ' unread on '+this.config.host);
                 signal = new q.Signal({
-                    points: [[new q.Point(downColor, downEffect)]],
+                    points: [[new q.Point(warnerColor, warnerEffect)]],
                     name: `${this.config.forum}`,
-                    message:message,
+                    message: message,
                     link: {
-                        url: this.config.forum+"/u/"+this.config.username+"/notifications?filter=unread",
+                        url:
+                            this.config.forum +
+                            '/u/' +
+                            this.config.username +
+                            '/notifications?filter=unread',
                         label: 'Show in Discourse',
                     },
-                });   
+                });
             }
             return signal;
         }
-        // if the answer is an error, send back the q error signal
+        // if notifications doesn't exist in response
         else {
             return response;
         }
@@ -112,24 +115,21 @@ class QDiscourse extends q.DesktopApp {
 
     // main function running
     async run() {
-        // check if the last char of host is '/'. if so crop it.
-        if(this.config.forum.charAt(this.config.forum.length-1) == '/'){
-            var host = this.config.forum.substring(0,this.config.forum.length-1);
-        }
-        else
-            var host = this.config.forum;
+        const warnerEffect = this.config.warnerEffect || 'BLINK';
+        const warnerColor = this.config.warnerColor || '#FF0000';
         const username = this.config.username;
+        let host = this.config.forum;
+
+        // check if the last char of host is '/'. if so crop it.
+        if (host.charAt(host.length - 1) == '/') {
+            host = host.substring(0, host.length - 1);
+        }
+
         // fecthing notifications
         let notifications = await this.getNotifications(host, username);
-        const downEffect = this.config.downEffect || 'BLINK';
-        const downColor = this.config.downColor || '#FF0000';
-        // generate the q signal
-        let signal = this.generateSignal(
-            notifications,
-            downColor,
-            downEffect
-        );
-        return signal;
+
+        // send the generated signal
+        return this.generateSignal(notifications, warnerColor, warnerEffect);
     }
 }
 

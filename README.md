@@ -2,21 +2,24 @@
 
 Displays Discourse admin notifications on a Das Keyboard Q Series.
 
+Discourse is a open source forum.
+For more informations about Discourse, visit <https://github.com/discourse/discourse>
+
+![Discourse applet on a Das Keyboard Q](assets/image.png "Das Keyboard Discourse applet")
+
+This applet use Discourse [API](https://docs.discourse.org/).
+
 [GitHub repository](https://github.com/matthieulapatate/daskeyboard-applet-discourse-admin)
+
+## Changelog
+
+[CHANGELOG.MD](CHANGELOG.md)
 
 ## Requirements and setup
 
 You need to have access to the forum /admin and create an API key with global access. To create such an API Key you have to go to your-forum.com/admin/key/new and give global access to the key.
 
 ![Discourse admin panel](assets/adminPanel.png "Qforum Admin Panel")
-
-
-## Example
-
-The "D" key in the image below is red because you have unread notifications.
-
-![Discourse applet on a Das Keyboard Q](assets/image.png "Das Keyboard Discourse applet")
-
 
 ## Installation
 
@@ -32,3 +35,7 @@ the Q Desktop application [https://www.daskeyboard.com](https://www.daskeyboard.
 ## Contributions
 
 Pull requests welcome.
+
+## Copyright / License
+
+[LICENSE.MD](CHANGELOG)
