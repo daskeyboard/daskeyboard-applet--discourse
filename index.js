@@ -87,14 +87,15 @@ class QDiscourse extends q.DesktopApp {
 
             // look if we got at least one notification unread
             if (notificationNumber != 0) { 
-                logger.info('you have ' + notificationNumber + ' notifications' + ' unread');
+                if(notificationNumber==1){
+                    var message='1 unread notification on '+this.config.host;
+                }
+                else
+                    var message= notificationNumber + ' notifications' + ' unread on '+this.config.host);
                 signal = new q.Signal({
                     points: [[new q.Point(downColor, downEffect)]],
                     name: `${this.config.forum}`,
-                    message:
-                        'You have ' +
-                        notificationNumber +
-                        ' unread notification'+notificationNumber>1?'s':''+' unread on '+this.config.host,
+                    message:message,
                     link: {
                         url: this.config.forum+"/u/"+this.config.username+"/notifications?filter=unread",
                         label: 'Show in Discourse',

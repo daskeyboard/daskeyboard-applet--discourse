@@ -75,7 +75,7 @@
             },
             {
                 "key": "downEffect",
-                "label": "Choose a DOWN effect",
+                "label": "Choose a warner effect",
                 "help": "Key effect when you got a new notification",
                 "order": 4,
                 "value": "BLINK",
@@ -83,7 +83,7 @@
             },
             {
                 "key": "downColor",
-                "label": "Choose a DOWN color",
+                "label": "Choose a warner color",
                 "help": "Color when some monitorings are DOWN",
                 "order": 5,
                 "value": "#FF0000",
