@@ -10,6 +10,7 @@ Make a key blinking when you have an unread notification.
 ## Requirements and setup
 
 You need to have access to the forum /admin and create an API key with global access. To create such an API Key you have to go to your-forum.com/admin/key/new and give global access to the key.
+
 ![Discourse admin panel](assets/adminPanel.png "Das Keyboard Admin Panel")
 
 
