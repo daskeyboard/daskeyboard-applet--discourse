@@ -79,7 +79,7 @@
                 "help": "Key effect when you got a new notification",
                 "order": 4,
                 "value": "BLINK",
-                "controlType": "effet"
+                "controlType": "effect"
             },
             {
                 "key": "downColor",

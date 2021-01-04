@@ -72,22 +72,15 @@ class QDiscourse extends q.DesktopApp {
         // if the answer is json response with notification array
         if (response.notifications) {
             let signal=null;
-            let color = upColor;
-            let effect = upEffect;
             // variable that stores the number of unread notification
             let notificationNumber = 0;
             // variable that stores the ids of unread notification
-            let alerts = [];
             for (let notification of response.notifications) {
                 let isRead = notification.read;
-                let notifID = notification.id;
 
                 // check if the notification is read or not
                 if (!isRead) {
-                    effect = downEffect;
                     notificationNumber++;
-                    color = downColor;
-                    alerts.push(notifID);
                 }
             }
 
@@ -96,13 +89,12 @@ class QDiscourse extends q.DesktopApp {
             if (notificationNumber != 0) { 
                 logger.info('you have ' + notificationNumber + ' notifications' + ' unread');
                 signal = new q.Signal({
-                    points: [[new q.Point(color, effect)]],
+                    points: [[new q.Point(downColor, downEffect)]],
                     name: `${this.config.forum}`,
                     message:
                         'You have ' +
                         notificationNumber +
-                        ' unread notifications with ids :' +
-                        alerts.join(', '),
+                        ' unread notification'+notificationNumber>1?'s':''+' unread on '+this.config.host,
                     link: {
                         url: this.config.forum+"/u/"+this.config.username+"/notifications?filter=unread",
                         label: 'Show in Discourse',

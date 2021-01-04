@@ -20,9 +20,7 @@ describe('QDiscourse', () => {
                     forum: forum,
                     username: username,
                     api_username: api_username,
-                    upColor: '#00FF00',
                     downColor: '#FF0000',
-                    upEffect: 'SET_COLOR',
                     downColor: 'SET_COLOR',
                 },
             },
@@ -66,9 +64,7 @@ describe('QDiscourse', () => {
                 const actions0 = require('./response-mook0.json');
                 const signal0 = await app.generateSignal(
                     actions0,
-                    app.config.upColor,
                     app.config.downColor,
-                    app.config.upEffect,
                     app.config.downEffect
                 );
                 assert.ok(
@@ -77,9 +73,7 @@ describe('QDiscourse', () => {
                 const actions1 = require('./response-mook1.json');
                 const signal1 = await app.generateSignal(
                     actions1,
-                    app.config.upColor,
                     app.config.downColor,
-                    app.config.upEffect,
                     app.config.downEffect
                 );
                 assert.ok(
