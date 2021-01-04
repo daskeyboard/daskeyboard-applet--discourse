@@ -68,7 +68,7 @@ class QDiscourse extends q.DesktopApp {
      * @param {*} warnerColor : key color 
      * @param {*} warnerEffect :
      */
-    async generateSignal(response, warnerColor, warnerEffect) {
+    async generateSignal(response, warnerColor, warnerEffect,host) {
         // if notifications exist in response
         if (response.notifications) {
             let signal = null;
@@ -86,18 +86,18 @@ class QDiscourse extends q.DesktopApp {
             if (notificationNumber != 0) {
                 let message =
                     notificationNumber == 1
-                        ? '1 unread notification on ' + this.config.host
+                        ? '1 unread notification on ' + host
                         : notificationNumber +
                           ' notifications unread on ' +
-                          this.config.host;
+                          host;
 
                 signal = new q.Signal({
                     points: [[new q.Point(warnerColor, warnerEffect)]],
-                    name: `${this.config.forum}`,
+                    name: 'Discourse',
                     message: message,
                     link: {
                         url:
-                            this.config.forum +
+                            host +
                             '/u/' +
                             this.config.username +
                             '/notifications?filter=unread',
@@ -129,7 +129,7 @@ class QDiscourse extends q.DesktopApp {
         let notifications = await this.getNotifications(host, username);
 
         // send the generated signal
-        return this.generateSignal(notifications, warnerColor, warnerEffect);
+        return this.generateSignal(notifications, warnerColor, warnerEffect,host);
     }
 }
 
