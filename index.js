@@ -16,8 +16,23 @@ class QDiscourse extends q.DesktopApp {
         this.serviceHeaders = {
             'Content-Type': 'application/json',
             'Api-Key': this.authorization.apiKey,
-            'Api-Username': this.config.username,
+            'Api-Username': this.config.api_username,
         };
+    }
+
+    /**
+     * 
+     * @param {*} host 
+     * @param {*} username 
+     */
+    parsingHost(forum){
+        // check if the last char of host is '/'. if so crop it.
+        if (forum.charAt(forum.length - 1) == '/') {
+            host = host.substring(0, host.length - 1);
+        }
+        if (forum.substring(0,7)!="http://" || forum.substring(0,8)!="https://"){
+            return "https://"+forum;
+        }
     }
 
     /**
@@ -65,10 +80,10 @@ class QDiscourse extends q.DesktopApp {
      * Send a q signal according to the response from API request
      *
      * @param {*} response : json response from API
-     * @param {*} warnerColor : key color 
+     * @param {*} warnerColor : key color
      * @param {*} warnerEffect :
      */
-    async generateSignal(response, warnerColor, warnerEffect,host) {
+    async generateSignal(response, warnerColor, warnerEffect, host) {
         // if notifications exist in response
         if (response.notifications) {
             let signal = null;
@@ -96,11 +111,7 @@ class QDiscourse extends q.DesktopApp {
                     name: 'Discourse',
                     message: message,
                     link: {
-                        url:
-                            host +
-                            '/u/' +
-                            this.config.username +
-                            '/notifications?filter=unread',
+                        url:`${host}/u/${this.config.username}/notifications?filter=unread`,
                         label: 'Show in Discourse',
                     },
                 });
@@ -120,26 +131,21 @@ class QDiscourse extends q.DesktopApp {
         const username = this.config.username;
         let host = this.config.forum;
 
-        // check if the last char of host is '/'. if so crop it.
-        if (host.charAt(host.length - 1) == '/') {
-            host = host.substring(0, host.length - 1);
-        }
+        let host = this.parsing(this.config.forum)
 
         // fecthing notifications
         let notifications = await this.getNotifications(host, username);
 
-        //remove the http:// || https:// at the head of host url
-        switch(host.substring(0,7)){
-            case "https:\/":
-                host=host.substring(8);
-                break;
-            case "http:\/\/":
-                host=host.substring(7);
-                break;
-        }
-        logger.info(host);
+        // remove the https:// || https:// at the head of host url
+        host = host.substring(8);
+        
         // send the generated signal
-        return this.generateSignal(notifications, warnerColor, warnerEffect,host);
+        return this.generateSignal(
+            notifications,
+            warnerColor,
+            warnerEffect,
+            host
+        );
     }
 }
 
