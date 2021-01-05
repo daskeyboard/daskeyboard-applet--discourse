@@ -128,6 +128,16 @@ class QDiscourse extends q.DesktopApp {
         // fecthing notifications
         let notifications = await this.getNotifications(host, username);
 
+        //remove the http:// || https:// at the head of host url
+        switch(host.substring(0,7)){
+            case "https:\/":
+                host=host.substring(8);
+                break;
+            case "http:\/\/":
+                host=host.substring(7);
+                break;
+        }
+        logger.info(host);
         // send the generated signal
         return this.generateSignal(notifications, warnerColor, warnerEffect,host);
     }
