@@ -5,7 +5,7 @@ const logger = q.logger;
 class QDiscourse extends q.DesktopApp {
     constructor() {
         super();
-        // run every 1 min
+        // Run every 1 min
         this.pollingInterval = 1 * 60 * 1000;
     }
 
@@ -16,28 +16,30 @@ class QDiscourse extends q.DesktopApp {
         this.serviceHeaders = {
             'Content-Type': 'application/json',
             'Api-Key': this.authorization.apiKey,
-            'Api-Username': this.config.api_username,
+            'Api-Username': this.config.username,
         };
     }
 
     /**
+     * Make sure url provided by user is well formated 
      * 
-     * @param {*} host 
-     * @param {*} username 
+     * @param {*} forum_url
      */
-    parsingHost(forum){
-        // check if the last char of host is '/'. if so crop it.
-        if (forum.charAt(forum.length - 1) == '/') {
-            host = host.substring(0, host.length - 1);
+    parsingHost(forum_url){
+        // Check if the last char of host is '/'. if so crop it.
+        if (forum_url.charAt(forum_url.length - 1) == '/') {
+            forum_url = forum_url.substring(0, forum_url.length - 1);
         }
-        if (forum.substring(0,7)!="http://" || forum.substring(0,8)!="https://"){
-            return "https://"+forum;
+        if (forum_url.substring(0,7)!="http://" && forum_url.substring(0,8)!="https://"){
+            return "https://"+forum_url;
         }
+        return forum_url;
+
     }
 
     /**
      * Function that fetch asynchronously the notifications of an user on
-     * the forum discourse informed
+     * the forum url discourse informed
      * @param {*} hostUrl : forum url
      * @param {*} username : forum username
      */
@@ -54,13 +56,13 @@ class QDiscourse extends q.DesktopApp {
                         error
                     )}`
                 );
-                // does not handdle internet issue
+                // Does not handdle internet issue
                 if (`${error.message}`.includes('getaddrinfo')) {
                 }
-                // if the username does not exit
+                // If the username does not exit
                 else if (`${error.message}`.includes('Invalid URI')) {
                     return q.Signal.error([
-                        'The Forum root URL is not reachable, please put a valid one.',
+                        'The forum root URL is not reachable, please put a valid one.',
                         `Detail: ${error.message}`,
                     ]);
                 }
@@ -84,7 +86,8 @@ class QDiscourse extends q.DesktopApp {
      * @param {*} warnerEffect :
      */
     async generateSignal(response, warnerColor, warnerEffect, host) {
-        // if notifications exist in response
+        logger.info(response);
+        // If notifications exist in response
         if (response.notifications) {
             let signal = null;
             let notificationNumber = 0;
@@ -97,7 +100,7 @@ class QDiscourse extends q.DesktopApp {
                 }
             }
 
-            // check if there are notifications
+            // Check if there are notifications
             if (notificationNumber != 0) {
                 let message =
                     notificationNumber == 1
@@ -118,28 +121,27 @@ class QDiscourse extends q.DesktopApp {
             }
             return signal;
         }
-        // if notifications doesn't exist in response
+        // If notifications doesn't exist in response
         else {
             return response;
         }
     }
 
-    // main function running
+    // Main function running
     async run() {
         const warnerEffect = this.config.warnerEffect || 'BLINK';
         const warnerColor = this.config.warnerColor || '#FF0000';
         const username = this.config.username;
-        let host = this.config.forum;
+        let host = this.parsingHost(this.config.forum_url);
+        logger.info(host);
 
-        let host = this.parsing(this.config.forum)
-
-        // fecthing notifications
+        // Fecthing notifications
         let notifications = await this.getNotifications(host, username);
 
-        // remove the https:// || https:// at the head of host url
+        // Remove the https:// || https:// at the head of host url
         host = host.substring(8);
         
-        // send the generated signal
+        // Send the generated signal
         return this.generateSignal(
             notifications,
             warnerColor,

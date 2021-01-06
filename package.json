@@ -47,7 +47,7 @@
         },
         "questions": [
             {
-                "key": "forum",
+                "key": "forum_url",
                 "label": "Base URL of discourse forum",
                 "placeholder": "https://qforum.daskeyboard.com/",
                 "order": 1,
@@ -60,23 +60,15 @@
                 "help": "Username used to fetch the notifications",
                 "order": 2,
                 "required": "true",
-                "placeholder": "mySuperUsername",
+                "placeholder": "johnDoe",
                 "controlType": "textbox"
             },
-            {
-                "key": "api_username",
-                "label": "Your API Key username",
-                "help": "API Username specified on the API Key generation",
-                "order": 3,
-                "placeholder": "system || single username",
-                "required": "true",
-                "controlType": "textbox"
-            },
+            
             {
                 "key": "warnerEffect",
                 "label": "Choose a warner effect",
                 "help": "Key effect when you got a new notification",
-                "order": 4,
+                "order": 3,
                 "value": "BLINK",
                 "controlType": "effect"
             },
@@ -84,7 +76,7 @@
                 "key": "warnerColor",
                 "label": "Choose a warner color",
                 "help": "Key color when you got a new notification",
-                "order": 5,
+                "order": 4,
                 "value": "#FF0000",
                 "controlType": "color"
             }

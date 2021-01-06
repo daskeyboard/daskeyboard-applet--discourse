@@ -17,7 +17,7 @@ describe('QDiscourse', () => {
             },
             applet: {
                 user: {
-                    forum: forum,
+                    forum_url: forum,
                     username: username,
                     api_username: api_username,
                     downColor: '#FF0000',
@@ -29,7 +29,7 @@ describe('QDiscourse', () => {
         return app;
     }
 
-    //test global run function
+    // Test global run function
     describe('#run()', () => {
         it('runs', async function () {
             return makeApp(
@@ -52,7 +52,7 @@ describe('QDiscourse', () => {
         });
     });
 
-    //generate signal without errors with 0 then 2 notification unread
+    // Generate signal without errors with 0 then 2 notification unread
     describe('#generateSignal()', () => {
         it('generate a signal', async function () {
             return makeApp(
@@ -61,32 +61,22 @@ describe('QDiscourse', () => {
                 auth.username,
                 auth.api_username
             ).then(async (app) => {
-                const actions0 = require('./response-mook0.json');
-                const signal0 = await app.generateSignal(
-                    actions0,
+                const actions = require('./goodResponseWith2NotificationsMock.json');
+                const signal = await app.generateSignal(
+                    actions,
                     app.config.downColor,
                     app.config.downEffect
                 );
                 assert.ok(
-                    signal0.message.includes('You have no unread notification')
-                );
-                const actions1 = require('./response-mook1.json');
-                const signal1 = await app.generateSignal(
-                    actions1,
-                    app.config.downColor,
-                    app.config.downEffect
-                );
-                assert.ok(
-                    signal1.message.includes(
-                        "You have 2 unread notifications with id's :"
+                    signal.message.includes(
+                        "2 notifications unread"
                     )
                 );
-                assert.ok(signal1.message.includes('3465115, 3464119'));
             });
         });
     });
 
-    //fetch the notifications of the testing user
+    // Fetch the notifications of the testing user
     describe('#getNotifications()', () => {
         it('fetch the notifications', async function () {
             return makeApp(
@@ -105,7 +95,7 @@ describe('QDiscourse', () => {
         });
     });
 
-    //trigger API Key error
+    // Trigger API Key error
     describe('#API-Key-error()', () => {
         it('trigger API Key error', async function () {
             return makeApp(
@@ -128,7 +118,7 @@ describe('QDiscourse', () => {
         });
     });
 
-    //trigger url forum error
+    // Trigger url forum error
     describe('#URL error()', () => {
         it('trigger non existing url forum error', async function () {
             return makeApp(
