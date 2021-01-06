@@ -43,7 +43,7 @@
         "authorization": {
             "type": "apiKey",
             "hint": "You need admin access to generate an API key",
-            "supportUrl": "https://github.com/discourse/discourse/blob/master/docs/ADMIN-QUICK-START-GUIDE.md"
+            "supportUrl": "<your-forum-url>.com/admin"
         },
         "questions": [
             {

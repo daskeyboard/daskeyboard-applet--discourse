@@ -1,4 +1,4 @@
-# Q Applet: Discourse notification warning (admin)
+# Q Applet: Discourse
 
 Displays Discourse admin notifications on a Das Keyboard Q Series.
 
