@@ -42,8 +42,8 @@
         },
         "authorization": {
             "type": "apiKey",
-            "hint": "You need admin access to generate an API key",
-            "supportUrl": "<your-forum-url>.com/admin"
+            "hint": "Go to the admin panel of your forum and generate an API key",
+            "supportUrl": "https://<your-forum-url>.com/admin/key/new"
         },
         "questions": [
             {

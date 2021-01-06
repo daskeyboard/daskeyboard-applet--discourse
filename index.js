@@ -21,20 +21,22 @@ class QDiscourse extends q.DesktopApp {
     }
 
     /**
-     * Make sure url provided by user is well formated 
-     * 
+     * Make sure url provided by user is well formated
+     *
      * @param {*} forum_url
      */
-    parsingHost(forum_url){
+    parsingHost(forum_url) {
         // Check if the last char of host is '/'. if so crop it.
         if (forum_url.charAt(forum_url.length - 1) == '/') {
             forum_url = forum_url.substring(0, forum_url.length - 1);
         }
-        if (forum_url.substring(0,7)!="http://" && forum_url.substring(0,8)!="https://"){
-            return "https://"+forum_url;
+        if (
+            forum_url.substring(0, 7) != 'http://' &&
+            forum_url.substring(0, 8) != 'https://'
+        ) {
+            return 'https://' + forum_url;
         }
         return forum_url;
-
     }
 
     /**
@@ -53,31 +55,37 @@ class QDiscourse extends q.DesktopApp {
             .catch((error) => {
                 logger.error(
                     `Discourse : Got error sending http request to service : ${JSON.stringify(
-                        error
+                        error.message
                     )}`
                 );
-                // Does not handdle internet issue
+                // Host name error
                 if (`${error.message}`.includes('getaddrinfo')) {
+                    return q.Signal.error(['The forum root URL is not reachable, please put a valid one.']);
                 }
-                // If the username does not exit
-                else if (`${error.message}`.includes('Invalid URI')) {
-                    return q.Signal.error([
-                        'The forum root URL is not reachable, please put a valid one.',
-                        `Detail: ${error.message}`,
-                    ]);
+                // API key error
+                else if (`${error.message}`.includes('403')) {
+                    return q.Signal.error(['The API Key or the username are not valid, please check your configuration']);
                 }
-                // API key issue
+                // Unknow error
                 else {
                     return q.Signal.error([
-                        'The account you are trying to fetch is not reachable, \
-                        please check if your API Key is valid and has global right\
-                         scope action.',
-                        `Detail: ${error.message}`,
+                        'Something went wrong, please check your configuration',
                     ]);
                 }
             });
     }
 
+    /**
+     * Check it the response has notifications object
+     */
+    checkNotifications(response) {
+        try {
+            if(response.notifications)
+            return true;
+        } catch (error) {
+            return false;
+        }
+    }
     /**
      * Send a q signal according to the response from API request
      *
@@ -86,9 +94,8 @@ class QDiscourse extends q.DesktopApp {
      * @param {*} warnerEffect :
      */
     async generateSignal(response, warnerColor, warnerEffect, host) {
-        logger.info(response);
         // If notifications exist in response
-        if (response.notifications) {
+        if (this.checkNotifications(response)) {
             let signal = null;
             let notificationNumber = 0;
             for (let notification of response.notifications) {
@@ -114,15 +121,13 @@ class QDiscourse extends q.DesktopApp {
                     name: 'Discourse',
                     message: message,
                     link: {
-                        url:`${host}/u/${this.config.username}/notifications?filter=unread`,
+                        url: `https://${host}/u/${this.config.username}/notifications?filter=unread`,
                         label: 'Show in Discourse',
                     },
                 });
             }
             return signal;
-        }
-        // If notifications doesn't exist in response
-        else {
+        } else {
             return response;
         }
     }
@@ -133,14 +138,13 @@ class QDiscourse extends q.DesktopApp {
         const warnerColor = this.config.warnerColor || '#FF0000';
         const username = this.config.username;
         let host = this.parsingHost(this.config.forum_url);
-        logger.info(host);
 
         // Fecthing notifications
         let notifications = await this.getNotifications(host, username);
 
         // Remove the https:// || https:// at the head of host url
         host = host.substring(8);
-        
+
         // Send the generated signal
         return this.generateSignal(
             notifications,
