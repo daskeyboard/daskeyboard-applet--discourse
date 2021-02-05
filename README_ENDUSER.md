@@ -1,13 +1,11 @@
-# Discourse
+# Discourse Notifications for Admins
 
-Displays Discourse admin notifications on a Das Keyboard Q Series.
+This applets displays Discourse admin notifications on a Das Keyboard Q series by blinking an RGB LED. This applets is intended for Discourse admins only.
 
-Discourse is a open source forum.
-
-For more informations about Discourse, visit <https://github.com/discourse/discourse>
+Discourse is a open source software forum. For more informations about Discourse, visit <https://github.com/discourse/discourse>.
 
 ![Discourse applet on a Das Keyboard Q](assets/image.png "Das Keyboard Discourse applet")
 
-This applet use Discourse [API](https://docs.discourse.org/).
+This applet uses Discourse API.
 
-[GitHub repository](https://github.com/matthieulapatate/daskeyboard-applet-discourse-admin)
+For developers: [GitHub repository](https://github.com/daskeyboard/daskeyboard-applet--discourse)
