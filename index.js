@@ -5,8 +5,8 @@ const logger = q.logger;
 class QDiscourse extends q.DesktopApp {
     constructor() {
         super();
-        // Run every 1 min
-        this.pollingInterval = 1 * 60 * 1000;
+        // Run every 15 min
+        this.pollingInterval = 15 * 60 * 1000;
     }
 
     /**
@@ -49,6 +49,7 @@ class QDiscourse extends q.DesktopApp {
      * @param {*} username : forum username
      */
     async getNotifications(host, username) {
+        logger.info(`Requesting Discourse notification on host: ${host} and username: ${username}`)
         return request
             .get({
                 url: host + '/notifications.json?username=' + username,
@@ -128,17 +129,16 @@ class QDiscourse extends q.DesktopApp {
         const warnerColor = this.config.warnerColor || '#FF0000';
         const username = this.config.username;
         let host = this.parsingHost(this.config.forum_url);
-
         // Fecthing notifications
         return this.getNotifications(host, username).then((notifications) => {
             // Remove protovol into the host to display beautiful popup
-            host = host.split('//')[1];
+            const hostWithoutProtocol = host.split('//')[1];
             // Send the generated signal
             return this.generateSignal(
                 notifications,
                 warnerColor,
                 warnerEffect,
-                host
+                hostWithoutProtocol
             );
         });
     }
